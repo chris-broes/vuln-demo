@@ -1,0 +1,21 @@
+services:
+  mcp-grafana:
+    image: cgr.dev/chainguard-private/mcp-grafana:latest
+    container_name: vuln-mcp-grafana
+    environment:
+      # Grafana connection settings
+      - GRAFANA_URL=http://vuln-grafana:3000
+      - GRAFANA_SERVICE_ACCOUNT_TOKEN=${GRAFANA_SERVICE_ACCOUNT_TOKEN:-}
+    ports:
+      - "3002:8000"
+    networks:
+      - vuln-demo_vuln-demo
+      - monitoring_monitoring
+    restart: unless-stopped
+    command: ["-t", "sse", "-address", "0.0.0.0:8000"]
+
+networks:
+  vuln-demo_vuln-demo:
+    external: true
+  monitoring_monitoring:
+    external: true

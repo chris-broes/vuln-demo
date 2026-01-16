@@ -28,7 +28,8 @@ RUN apk add --no-cache \
     bash \
     curl \
     wget \
-    tar
+    tar \
+    jq
 
 # Install Trivy
 RUN wget -qO - https://github.com/aquasecurity/trivy/releases/download/v0.48.3/trivy_0.48.3_Linux-64bit.tar.gz | tar -xz -C /usr/local/bin trivy

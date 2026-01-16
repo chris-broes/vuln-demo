@@ -40,7 +40,8 @@ if ! command -v grype &> /dev/null; then
 fi
 
 # Create reports directory with variant subdirectory
-REPORTS_DIR="./reports/$VARIANT"
+# Use absolute path to work correctly from scheduler container
+REPORTS_DIR="/reports/$VARIANT"
 mkdir -p "$REPORTS_DIR"
 
 # Application images with variant tags
@@ -58,7 +59,7 @@ if [[ "$VARIANT" == "baseline" ]]; then
         "grafana/grafana:latest"
         "prom/prometheus:latest"
         "python:3.12"
-        "scanner-scheduler:latest"
+        "grafana/mcp-grafana:latest"
     )
 else  # chainguard
     INFRA_IMAGES=(
@@ -66,7 +67,7 @@ else  # chainguard
         "cgr.dev/chainguard-private/grafana:latest"
         "cgr.dev/chainguard-private/prometheus:latest"
         "cgr.dev/chrisbro.com/python:3.12"
-        "scanner-scheduler:latest"
+        "cgr.dev/chainguard-private/mcp-grafana:latest"
     )
 fi
 
@@ -124,7 +125,8 @@ for IMAGE in "${IMAGES[@]}"; do
     echo "   🔀 Merging results..."
 
     # Merge results with base image metadata
-    python3 ./scripts/merge-scan-results.py \
+    # Use absolute path to support running from different working directories
+    python3 /scripts/merge-scan-results.py \
         "$REPORTS_DIR/${IMAGE_NAME}_trivy_scan.json" \
         "$REPORTS_DIR/${IMAGE_NAME}_grype_scan.json" \
         "$REPORTS_DIR/${IMAGE_NAME}_scan.json" \
